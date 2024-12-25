@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import { useEditorStore } from "@/stores/editor";
-import { storeToRefs } from "pinia";
-import { ref } from "vue";
+import { useEditorStore } from '@/stores/editor'
+import { storeToRefs } from 'pinia'
+import { ref } from 'vue'
 
-const store = useEditorStore();
-const { content } = storeToRefs(store);
-const isFocused = ref(false);
-const textareaRef = ref<HTMLTextAreaElement | null>(null);
+const store = useEditorStore()
+const { content } = storeToRefs(store)
+const isFocused = ref(false)
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
 function handleInput(e: Event) {
-  const target = e.target as HTMLTextAreaElement;
-  store.updateContent(target.value);
+  const target = e.target as HTMLTextAreaElement
+  store.updateContent(target.value)
 }
 
 function handleFocus() {
-  isFocused.value = true;
+  isFocused.value = true
 }
 
 function handleBlur() {
-  isFocused.value = false;
+  isFocused.value = false
 }
 
 defineExpose({
   focus: () => textareaRef.value?.focus(),
-});
+})
 </script>
 
 <template>

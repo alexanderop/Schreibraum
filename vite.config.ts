@@ -15,5 +15,11 @@ export default defineConfig(({ command }) => ({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  base: command === 'build' ? '/starter-vue/' : '/',
+  base: command === 'build' ? '/Schreibraum/' : '/',
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./vitest.setup.ts'],
+    include: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}'],
+    globals: true,
+  },
 }))

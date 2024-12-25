@@ -1,47 +1,76 @@
 <script setup lang="ts">
-import { useDark, useToggle } from '@vueuse/core'
-import { RouterLink, RouterView } from 'vue-router'
+import CommandPalette from '@/components/CommandPalette.vue'
+import { useEditorStore } from '@/stores/editor'
+import { useDark } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
+import { RouterView } from 'vue-router'
 
-const isDark = useDark()
-const toggleDark = useToggle(isDark)
+// Force dark mode since this is a dark-only design
+useDark({
+  initialValue: 'dark',
+  disableTransition: false,
+})
+
+const store = useEditorStore()
+const { isPreviewVisible } = storeToRefs(store)
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-    <header class="bg-white dark:bg-gray-800 shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-          <div class="flex-shrink-0">
-            <img alt="Vue logo" class="h-8 w-8" src="@/assets/logo.svg">
+  <div class="min-h-screen bg-[#0a0a0a]">
+    <!-- Header -->
+    <header class="bg-[#141414]">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex items-center justify-between h-14">
+          <!-- Logo Section -->
+          <div class="flex items-center gap-3">
+            <div class="h-6 w-6 rounded-full bg-purple-500" />
+            <div class="flex items-center">
+              <span class="text-white font-semibold">Minimal</span>
+              <span class="text-purple-400 font-semibold">Blog</span>
+            </div>
           </div>
-          <nav class="flex space-x-4">
-            <RouterLink
-              to="/"
-              class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-              :class="{ 'text-primary-600 dark:text-primary-400': $route.path === '/' }"
-            >
-              Home
-            </RouterLink>
-            <RouterLink
-              to="/about"
-              class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-              :class="{ 'text-primary-600 dark:text-primary-400': $route.path === '/about' }"
-            >
-              About
-            </RouterLink>
-            <button
-              class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-              @click="toggleDark()"
-            >
-              {{ isDark ? '🌙' : '☀️' }}
+
+          <!-- Actions -->
+          <div class="flex items-center gap-4">
+            <div class="bg-purple-500/10 px-4 py-1.5 rounded-full">
+              <span class="text-purple-400 text-sm">Saved ✓</span>
+            </div>
+            <button class="w-8 h-8 rounded-full bg-[#1d1d1d] text-white flex items-center justify-center">
+              ?
             </button>
-          </nav>
+          </div>
         </div>
       </div>
     </header>
 
-    <main class="dark:text-gray-100">
-      <RouterView />
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-5">
+      <div
+        class="grid gap-6"
+        :class="{ 'grid-cols-2': isPreviewVisible, 'grid-cols-1': !isPreviewVisible }"
+      >
+        <!-- Markdown Section -->
+        <div>
+          <h3 class="text-purple-400 text-xs font-medium mb-2">
+            MARKDOWN
+          </h3>
+          <div class="bg-[#141414] rounded p-4 min-h-[580px]">
+            <RouterView name="markdown" />
+          </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div v-if="isPreviewVisible">
+          <h3 class="text-purple-400 text-xs font-medium mb-2">
+            PREVIEW
+          </h3>
+          <div class="bg-[#141414] rounded p-4 min-h-[580px]">
+            <RouterView name="preview" />
+          </div>
+        </div>
+      </div>
     </main>
+
+    <CommandPalette />
   </div>
 </template>

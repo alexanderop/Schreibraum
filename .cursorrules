@@ -1,0 +1,84 @@
+# Rules for this Project
+
+## Rules for Testing
+for testing a test file can never directly use testing library you always need to create a DSL in a own file
+
+## Commit MEssages
+All commit messages must follow conventional commit messages like this:
+
+# Conventional Commits Quick Guide
+
+## Basic Structure
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+## Main Types
+- `fix:` - patches a bug (correlates with PATCH version)
+- `feat:` - introduces new feature (correlates with MINOR version)
+- Other common types: `build:`, `chore:`, `ci:`, `docs:`, `style:`, `refactor:`, `perf:`, `test:`
+
+## Breaking Changes
+Indicated by either:
+- Adding `!` after type/scope: `feat!:` or `feat(api)!:`
+- Adding footer: `BREAKING CHANGE: <description>`
+
+## Valid Examples
+
+### Simple Changes
+```
+feat: add user authentication
+fix: correct email validation regex
+docs: update README installation steps
+style: format user controller
+test: add unit tests for auth service
+```
+
+### With Scope
+```
+feat(auth): implement JWT tokens
+fix(api): handle null response from server
+perf(db): optimize user queries
+```
+
+### Breaking Changes
+```
+feat!: remove deprecated login endpoint
+feat(api)!: change authentication headers
+
+chore!: drop Node 14 support
+BREAKING CHANGE: minimum supported Node version is now 16
+```
+
+### With Body and Footer
+```
+fix: prevent concurrent request racing
+
+Introduce request ID tracking to ensure only the latest
+request is processed. Remove legacy timeout handlers.
+
+Reviewed-by: Alice
+Fixes: #123
+```
+
+### Multi-paragraph Body
+```
+feat: implement user roles
+
+Add role-based access control to all API endpoints.
+Roles are now stored in the user profile and checked
+on each request.
+
+The following roles are available:
+- admin
+- moderator
+- user
+
+BREAKING CHANGE: all endpoints now require role header
+Fixes: #456
+Reviewed-by: Bob
+```

@@ -1,3 +1,7 @@
 #!/usr/bin/env sh
 
+# Run tests first
+npm test || exit 1
+
+# Then run lint-staged
 npx lint-staged 

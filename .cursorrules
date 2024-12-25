@@ -8,6 +8,7 @@
 - Leverage template literal types 
 - Use `satisfies` with `as const` for type-safe constants
 - Avoid type assertions (`as`)
+- always use '' instead of "" for strings
 
 ## Rules for Testing
 - Create DSL in separate test files

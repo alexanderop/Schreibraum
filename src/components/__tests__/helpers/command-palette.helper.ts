@@ -98,7 +98,11 @@ export class CommandPaletteTest {
   }
 
   isCommandVisible(commandName: string) {
-    return screen.queryByText(commandName) !== null;
+    const listbox = screen.queryByRole("listbox");
+    if (!listbox) return false;
+    return (
+      screen.queryByRole("option", { name: new RegExp(commandName) }) !== null
+    );
   }
 
   getHighlightedCommand() {

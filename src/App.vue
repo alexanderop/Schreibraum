@@ -13,11 +13,9 @@ useDark({
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#0a0a0a]">
-    <TheLayout>
-      <TheHeader />
-      <TheEditor />
-      <CommandPalette />
-    </TheLayout>
-  </div>
+  <TheLayout>
+    <TheHeader />
+    <TheEditor />
+    <CommandPalette />
+  </TheLayout>
 </template>

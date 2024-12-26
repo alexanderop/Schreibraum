@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import CommandPalette from '@/components/CommandPalette.vue'
-import TheEditor from '@/components/TheEditor.vue'
 import TheLayout from '@/components/TheLayout.vue'
 import { useDark } from '@vueuse/core'
 
@@ -13,7 +11,6 @@ useDark({
 
 <template>
   <TheLayout>
-    <TheEditor />
-    <CommandPalette />
+    <router-view />
   </TheLayout>
 </template>

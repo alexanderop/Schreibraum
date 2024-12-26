@@ -16,23 +16,21 @@ export class MarkdownPreviewTest {
   constructor(pinia: Pinia) {
     this.router = createRouter({
       history: createMemoryHistory(),
-      routes: [
-        {
-          path: '/',
-          components: {
-            markdown: MarkdownEditor,
-            preview: MarkdownPreview,
-          },
-        },
-      ],
+      routes: [{ path: '/', component: {} }],
     })
 
     const { unmount } = render(App, {
       global: {
-        plugins: [
-          this.router,
-          pinia,
-        ],
+        plugins: [this.router, pinia],
+        stubs: {
+          TheLayout: {
+            template: '<div class="grid grid-cols-2 gap-4 h-full"><MarkdownEditor /><MarkdownPreview /></div>',
+            components: {
+              MarkdownEditor,
+              MarkdownPreview,
+            },
+          },
+        },
       },
     })
     this.cleanup = unmount

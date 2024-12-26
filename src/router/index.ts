@@ -1,5 +1,6 @@
 import MarkdownEditor from '@/components/MarkdownEditor.vue'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
+import Index from '@/pages/index.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -8,6 +9,7 @@ const router = createRouter({
     {
       path: '/',
       components: {
+        default: Index,
         markdown: MarkdownEditor,
         preview: MarkdownPreview,
       },

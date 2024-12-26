@@ -6,7 +6,6 @@ import TheLayout from '@/components/TheLayout.vue'
 import userEvent from '@testing-library/user-event'
 import { render, screen, waitFor } from '@testing-library/vue'
 import { createPinia } from 'pinia'
-import { expect } from 'vitest'
 import { createRouter, createWebHistory } from 'vue-router'
 
 export class CommandPaletteTest {
@@ -16,26 +15,22 @@ export class CommandPaletteTest {
   constructor() {
     const router = createRouter({
       history: createWebHistory(),
-      routes: [
-        {
-          path: '/',
-          components: {
-            markdown: { template: '<div>Markdown View</div>' },
-            preview: { template: '<div>Preview View</div>' },
-          },
-        },
-      ],
+      routes: [{ path: '/', component: {} }],
     })
 
     const pinia = createPinia()
     const { container } = render(App, {
       global: {
         plugins: [router, pinia],
-        components: {
-          TheLayout,
-          TheHeader,
-          TheEditor,
-          CommandPalette,
+        stubs: {
+          TheLayout: {
+            template: '<div><TheHeader /><div class="grid grid-cols-2 gap-4 h-full"><TheEditor /><CommandPalette /></div></div>',
+            components: {
+              TheHeader,
+              TheEditor,
+              CommandPalette,
+            },
+          },
         },
       },
     })

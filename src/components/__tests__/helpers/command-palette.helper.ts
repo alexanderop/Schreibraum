@@ -1,40 +1,22 @@
 import App from '@/App.vue'
-import CommandPalette from '@/components/CommandPalette.vue'
-import TheEditor from '@/components/TheEditor.vue'
-import TheHeader from '@/components/TheHeader.vue'
-import TheLayout from '@/components/TheLayout.vue'
+import router from '@/router'
 import userEvent from '@testing-library/user-event'
 import { render, screen, waitFor } from '@testing-library/vue'
 import { createPinia } from 'pinia'
-import { createRouter, createWebHistory } from 'vue-router'
+import { expect } from 'vitest'
 
 export class CommandPaletteTest {
   private user = userEvent.setup()
-  private container: Element | undefined
+  private container: Element
 
   constructor() {
-    const router = createRouter({
-      history: createWebHistory(),
-      routes: [{ path: '/', component: {} }],
-    })
-
     const pinia = createPinia()
     const { container } = render(App, {
       global: {
         plugins: [router, pinia],
-        stubs: {
-          TheLayout: {
-            template: '<div><TheHeader /><div class="grid grid-cols-2 gap-4 h-full"><TheEditor /><CommandPalette /></div></div>',
-            components: {
-              TheHeader,
-              TheEditor,
-              CommandPalette,
-            },
-          },
-        },
       },
     })
-    this.container = container
+    this.container = container as HTMLElement
   }
 
   async openCommandPalette() {

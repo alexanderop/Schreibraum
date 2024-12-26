@@ -2,26 +2,20 @@ import type { Pinia } from 'pinia'
 import App from '@/App.vue'
 import MarkdownEditor from '@/components/MarkdownEditor.vue'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
+import router from '@/router'
 import { useEditorStore } from '@/stores/editor'
 import userEvent from '@testing-library/user-event'
 import { render, screen, waitFor } from '@testing-library/vue'
-import { createMemoryHistory, createRouter } from 'vue-router'
 
 export class MarkdownPreviewTest {
   private user = userEvent.setup()
   private store: ReturnType<typeof useEditorStore>
-  private router: ReturnType<typeof createRouter>
   private cleanup: () => void
 
   constructor(pinia: Pinia) {
-    this.router = createRouter({
-      history: createMemoryHistory(),
-      routes: [{ path: '/', component: {} }],
-    })
-
     const { unmount } = render(App, {
       global: {
-        plugins: [this.router, pinia],
+        plugins: [router, pinia],
         stubs: {
           TheLayout: {
             template: '<div class="grid grid-cols-2 gap-4 h-full"><MarkdownEditor /><MarkdownPreview /></div>',
@@ -39,7 +33,7 @@ export class MarkdownPreviewTest {
     this.store = useEditorStore()
 
     // Navigate to the route to ensure components are mounted
-    this.router.push('/')
+    router.push('/')
   }
 
   destroy() {

@@ -8,6 +8,7 @@ import { computed, onMounted, ref } from 'vue'
 const store = useEditorStore()
 const { content, isPreviewVisible } = storeToRefs(store)
 const md = ref<MarkdownIt>()
+// foo
 
 onMounted(async () => {
   const markdownIt = MarkdownIt({

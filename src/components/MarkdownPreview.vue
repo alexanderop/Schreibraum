@@ -6,7 +6,7 @@ import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref } from 'vue'
 
 const store = useEditorStore()
-const { content } = storeToRefs(store)
+const { content, isPreviewVisible } = storeToRefs(store)
 const md = ref<MarkdownIt>()
 
 onMounted(async () => {
@@ -37,6 +37,7 @@ const htmlContent = computed(() => {
 
 <template>
   <div
+    v-show="isPreviewVisible"
     data-testid="preview-panel"
     class="prose mx-auto mt-8 max-w-5xl text-text-base"
     v-html="htmlContent"

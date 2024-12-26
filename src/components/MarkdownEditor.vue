@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 import { onMounted, ref } from 'vue'
 
 const store = useEditorStore()
-const { content } = storeToRefs(store)
+const { content, isEditorVisible } = storeToRefs(store)
 const isFocused = ref(false)
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
@@ -38,6 +38,7 @@ defineExpose({
 
 <template>
   <div
+    v-show="isEditorVisible"
     class="p-4"
     :class="{
       'ring-1 ring-accent rounded': isFocused,

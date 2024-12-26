@@ -8,7 +8,6 @@ const {
   inputRef,
   showCommands,
   filteredCommands,
-  openPalette,
   closePalette,
   executeCommand,
 } = useCommandPalette()
@@ -23,7 +22,7 @@ const {
     leave-from-class="transform scale-100 opacity-100"
     leave-to-class="transform scale-95 opacity-0"
   >
-    <div v-if="isOpen" class="fixed inset-0 z-50 flex items-start justify-center" @click="closePalette">
+    <div v-if="isOpen" class="fixed inset-0 z-50 flex items-start justify-center" data-testid="command-palette" @click="closePalette">
       <div class="fixed inset-0 bg-black/50" aria-hidden="true" />
 
       <div
@@ -41,8 +40,10 @@ const {
                 ref="inputRef"
                 v-model="searchQuery"
                 type="text"
+                data-testid="command-input"
                 class="w-full bg-transparent text-[#cccccc] text-sm focus:outline-none placeholder-[#858585]"
                 placeholder="Type > to see available commands..."
+                aria-label="Command palette input"
               >
             </div>
           </div>
@@ -52,11 +53,17 @@ const {
             v-if="showCommands"
             class="max-h-[440px] overflow-y-auto"
             role="listbox"
+            data-testid="command-list"
+            :aria-label="`Command list with ${filteredCommands.length} commands`"
           >
             <div
               v-for="(command, index) in filteredCommands"
               :key="command.id"
               role="option"
+              data-testid="command-option"
+              :data-command-id="command.id"
+              :aria-selected="index === selectedIndex"
+              :aria-label="`${command.title} - ${command.description}`"
               class="px-2 py-1.5 cursor-pointer text-sm flex items-center"
               :class="{
                 'bg-[#04395e] text-white': index === selectedIndex,
@@ -73,11 +80,12 @@ const {
               <!-- Command Info -->
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between">
-                  <span class="truncate font-medium">
+                  <span class="truncate font-medium" data-testid="command-title">
                     {{ command.title }}
                   </span>
                   <span
                     class="ml-4 flex-shrink-0 font-mono text-xs px-1.5 py-0.5 rounded"
+                    data-testid="command-shortcut"
                     :class="index === selectedIndex ? 'bg-[#1c5c92] text-white' : 'bg-[#333333] text-[#858585]'"
                   >
                     {{ command.shortcut }}
@@ -85,6 +93,7 @@ const {
                 </div>
                 <div
                   class="text-xs mt-0.5 truncate"
+                  data-testid="command-description"
                   :class="index === selectedIndex ? 'text-[#ccccccc]' : 'text-[#858585]'"
                 >
                   {{ command.description }}

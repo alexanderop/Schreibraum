@@ -1,7 +1,12 @@
 import App from '@/App.vue'
+import CommandPalette from '@/components/CommandPalette.vue'
+import TheEditor from '@/components/TheEditor.vue'
+import TheHeader from '@/components/TheHeader.vue'
+import TheLayout from '@/components/TheLayout.vue'
 import userEvent from '@testing-library/user-event'
 import { render, screen, waitFor } from '@testing-library/vue'
 import { createPinia } from 'pinia'
+import { expect } from 'vitest'
 import { createRouter, createWebHistory } from 'vue-router'
 
 export class CommandPaletteTest {
@@ -26,6 +31,12 @@ export class CommandPaletteTest {
     const { container } = render(App, {
       global: {
         plugins: [router, pinia],
+        components: {
+          TheLayout,
+          TheHeader,
+          TheEditor,
+          CommandPalette,
+        },
       },
     })
     this.container = container
@@ -59,9 +70,7 @@ export class CommandPaletteTest {
 
   async typeInCommandPalette(text: string) {
     const input = await waitFor(() => {
-      const el = screen.queryByPlaceholderText(
-        'Type > to see available commands...',
-      )
+      const el = screen.queryByTestId('command-input')
       if (!el)
         throw new Error('Command palette input not found')
       return el
@@ -69,7 +78,10 @@ export class CommandPaletteTest {
     await this.user.type(input, text)
     // Wait for commands to be filtered/displayed
     await waitFor(() => {
-      const commands = screen.queryAllByRole('option')
+      const commandList = screen.queryByTestId('command-list')
+      if (!commandList)
+        throw new Error('Command list not visible')
+      const commands = screen.queryAllByTestId('command-option')
       if (commands.length === 0)
         throw new Error('No commands visible')
       return true
@@ -96,29 +108,29 @@ export class CommandPaletteTest {
   }
 
   isCommandPaletteVisible() {
-    return (
-      screen.queryByPlaceholderText('Type > to see available commands...')
-      !== null
-    )
+    return screen.queryByTestId('command-palette') !== null
   }
 
   isCommandVisible(commandName: string) {
-    const listbox = screen.queryByRole('listbox')
-    if (!listbox)
+    const commandList = screen.queryByTestId('command-list')
+    if (!commandList)
       return false
-    return (
-      screen.queryByRole('option', { name: new RegExp(commandName) }) !== null
-    )
+
+    return screen.queryByRole('option', {
+      name: new RegExp(`${commandName}.*`),
+    }) !== null
   }
 
   getHighlightedCommand() {
-    const commands = screen.getAllByRole('option')
+    const commands = screen.getAllByTestId('command-option')
     const highlightedCommand = commands.find(
-      command =>
-        command.classList.contains('bg-[#2a2a2a]')
-        && !command.classList.contains('hover:bg-[#2a2a2a]'),
+      command => command.getAttribute('aria-selected') === 'true',
     )
-    const titleElement = highlightedCommand?.querySelector('.text-white')
+    if (!highlightedCommand)
+      return ''
+
+    const titleElement = highlightedCommand.querySelector('[data-testid="command-title"]')
+
     return titleElement?.textContent?.trim() || ''
   }
 
@@ -126,7 +138,10 @@ export class CommandPaletteTest {
     await this.user.keyboard('{Meta>}n{/Meta}')
     // Wait for the highlight to update
     await waitFor(() => {
-      const commands = screen.queryAllByRole('option')
+      const commandList = screen.queryByTestId('command-list')
+      if (!commandList)
+        throw new Error('Command list not visible')
+      const commands = screen.queryAllByTestId('command-option')
       if (commands.length === 0)
         throw new Error('No commands visible')
       return true

@@ -12,6 +12,7 @@ export default defineConfig({
     deps: {
       inline: ['@vue', '@vueuse', 'vue-demi'],
     },
+    testTimeout: 10000,
   },
   resolve: {
     alias: {

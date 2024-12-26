@@ -1,5 +1,5 @@
-import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { useEditorStore } from '@/stores/editor'
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 
 export interface Command {
   id: string
@@ -205,6 +205,6 @@ export function useCommandPalette() {
     filteredCommands,
     openPalette,
     closePalette,
-    executeCommand
+    executeCommand,
   }
-} 
+}

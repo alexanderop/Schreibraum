@@ -1,5 +1,7 @@
+import { createTestingPinia } from '@pinia/testing'
 import { cleanup } from '@testing-library/vue'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MarkdownPreviewTest } from './helpers/markdown-preview.helper'
 import '@testing-library/jest-dom'
 
@@ -7,10 +9,26 @@ describe('markdown preview features', () => {
   let markdownPreview: MarkdownPreviewTest
 
   beforeEach(() => {
-    markdownPreview = new MarkdownPreviewTest()
+    cleanup()
+    const pinia = createTestingPinia({
+      initialState: {
+        editor: {
+          content: '',
+          isPreviewVisible: true,
+          isEditorVisible: true,
+          isWordWrapEnabled: false,
+        },
+      },
+      stubActions: false,
+      createSpy: vi.fn,
+    })
+    setActivePinia(createPinia())
+    setActivePinia(pinia)
+    markdownPreview = new MarkdownPreviewTest(pinia)
   })
 
   afterEach(() => {
+    markdownPreview.destroy()
     cleanup()
   })
 
@@ -114,17 +132,15 @@ code block
 `
     await markdownPreview.typeInEditor(markdownText)
     const content = await markdownPreview.getPreviewContent()
-
     expect(content).toContain('<h1>Heading 1</h1>')
     expect(content).toContain('<h2>Heading 2</h2>')
-    expect(content).toContain('<em>italic</em>')
-    expect(content).toContain('<strong>bold</strong>')
+    expect(content).toContain('<p>This is a paragraph with <em>italic</em> and <strong>bold</strong> text.</p>')
     expect(content).toContain('<ul>')
+    expect(content).toContain('<pre><code>code block')
     expect(content).toContain('<ol>')
     expect(content).toContain('<blockquote>')
     expect(content).toContain('<code>')
-    expect(content).toContain('<pre>')
-    expect(content).toContain('<a href="https://example.com">')
+    expect(content).toContain('<a href="https://example.com" target="_blank" rel="noopener noreferrer">Link</a>')
   })
 
   it('should update preview in real-time', async () => {

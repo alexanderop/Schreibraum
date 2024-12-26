@@ -1,24 +1,21 @@
+import type { Pinia } from 'pinia'
 import App from '@/App.vue'
 import MarkdownEditor from '@/components/MarkdownEditor.vue'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
 import { useEditorStore } from '@/stores/editor'
 import userEvent from '@testing-library/user-event'
 import { render, screen, waitFor } from '@testing-library/vue'
-import { createPinia, setActivePinia } from 'pinia'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createMemoryHistory, createRouter } from 'vue-router'
 
 export class MarkdownPreviewTest {
   private user = userEvent.setup()
-  private pinia: ReturnType<typeof createPinia>
   private store: ReturnType<typeof useEditorStore>
+  private router: ReturnType<typeof createRouter>
+  private cleanup: () => void
 
-  constructor() {
-    // Create and activate pinia first
-    this.pinia = createPinia()
-    setActivePinia(this.pinia)
-
-    const router = createRouter({
-      history: createWebHistory(),
+  constructor(pinia: Pinia) {
+    this.router = createRouter({
+      history: createMemoryHistory(),
       routes: [
         {
           path: '/',
@@ -30,17 +27,25 @@ export class MarkdownPreviewTest {
       ],
     })
 
-    render(App, {
+    const { unmount } = render(App, {
       global: {
-        plugins: [router, this.pinia],
+        plugins: [
+          this.router,
+          pinia,
+        ],
       },
     })
+    this.cleanup = unmount
 
     // Initialize store after pinia is set up
     this.store = useEditorStore()
 
     // Navigate to the route to ensure components are mounted
-    router.push('/')
+    this.router.push('/')
+  }
+
+  destroy() {
+    this.cleanup()
   }
 
   async typeInEditor(text: string) {
@@ -52,12 +57,12 @@ export class MarkdownPreviewTest {
       return editor
     })
 
-    const editor = screen.getByRole('textbox')
+    const editor = screen.getByRole('textbox') as HTMLTextAreaElement
+    // Set value directly instead of simulating typing
     await this.user.clear(editor)
-    if (text.length > 0) {
-      // Only type if there's text to type
-      await this.user.type(editor, text)
-    }
+    editor.value = text
+    // Dispatch input event to trigger reactivity
+    editor.dispatchEvent(new Event('input'))
   }
 
   async clearEditor() {
@@ -73,8 +78,8 @@ export class MarkdownPreviewTest {
   }
 
   async getPreviewContent() {
-    // We need to wait a bit for the preview to update
-    await new Promise(resolve => setTimeout(resolve, 100))
+    // Remove artificial delay and just wait for the preview to be available
+    await waitFor(() => screen.getByTestId('preview-panel'))
     const previewPanel = screen.getByTestId('preview-panel')
     return previewPanel.innerHTML.trim()
   }

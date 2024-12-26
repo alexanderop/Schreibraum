@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import CommandPalette from '@/components/CommandPalette.vue'
 import TheEditor from '@/components/TheEditor.vue'
-import TheHeader from '@/components/TheHeader.vue'
 import TheLayout from '@/components/TheLayout.vue'
 import { useDark } from '@vueuse/core'
 
@@ -14,7 +13,6 @@ useDark({
 
 <template>
   <TheLayout>
-    <TheHeader />
     <TheEditor />
     <CommandPalette />
   </TheLayout>

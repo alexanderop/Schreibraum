@@ -20,34 +20,58 @@ watch(isEditorVisible, (visible) => {
 </script>
 
 <template>
-  <main class="py-5">
+  <main class="py-6">
     <div
-      class="grid gap-6 h-[calc(100vh-theme(spacing.14)-theme(spacing.10))]"
+      class="grid gap-8 transition-all duration-300"
       :class="{
         'grid-cols-2': isPreviewVisible && isEditorVisible,
         'grid-cols-1': !isPreviewVisible || !isEditorVisible,
       }"
     >
       <!-- Markdown Section -->
-      <div v-if="isEditorVisible" class="h-full">
-        <h3 class="text-accent-subtle text-xs font-medium mb-2">
-          MARKDOWN
-        </h3>
+      <div
+        v-show="isEditorVisible"
+        class="transition-opacity duration-300"
+        :class="{ 'opacity-0': !isEditorVisible }"
+      >
+        <div class="flex items-center gap-2 mb-3 sticky top-0 pt-2 pb-4 z-10 bg-gradient-to-b from-fill to-transparent">
+          <h3 class="text-xs font-medium uppercase tracking-wider text-accent">
+            Markdown
+          </h3>
+          <div class="h-px flex-1 bg-border-translucent" />
+        </div>
         <div
           ref="markdownRef"
-          class="bg-[#141414] rounded h-[calc(100%-theme(spacing.6))]"
+          class="backdrop-blur-sm rounded-xl border border-border-translucent bg-card-translucent shadow-2xl shadow-fill/25"
         >
-          <RouterView name="markdown" />
+          <RouterView v-slot="{ Component }" name="markdown">
+            <keep-alive>
+              <component :is="Component" />
+            </keep-alive>
+          </RouterView>
         </div>
       </div>
 
       <!-- Preview Section -->
-      <div v-if="isPreviewVisible" class="h-full">
-        <h3 class="text-accent-subtle text-xs font-medium mb-2">
-          PREVIEW
-        </h3>
-        <div class="bg-[#141414] rounded p-4 h-[calc(100%-theme(spacing.6))]">
-          <RouterView name="preview" />
+      <div
+        v-show="isPreviewVisible"
+        class="transition-opacity duration-300"
+        :class="{ 'opacity-0': !isPreviewVisible }"
+      >
+        <div class="flex items-center gap-2 mb-3 sticky top-0 pt-2 pb-4 z-10 bg-gradient-to-b from-fill to-transparent">
+          <h3 class="text-xs font-medium uppercase tracking-wider text-accent">
+            Preview
+          </h3>
+          <div class="h-px flex-1 bg-border-translucent" />
+        </div>
+        <div
+          class="backdrop-blur-sm rounded-xl border border-border-translucent bg-card-translucent p-6 shadow-2xl shadow-fill/25 overflow-auto"
+        >
+          <RouterView v-slot="{ Component }" name="preview">
+            <keep-alive>
+              <component :is="Component" />
+            </keep-alive>
+          </RouterView>
         </div>
       </div>
     </div>

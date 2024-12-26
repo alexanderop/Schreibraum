@@ -13,3 +13,15 @@ globalThis.ResizeObserver = vi.fn().mockImplementation(() => ({
   unobserve: vi.fn(),
   disconnect: vi.fn(),
 }))
+
+vi.mock('@shikijs/markdown-it', () => ({
+  default: () => () => {
+    // Simple mock that just returns the code block without highlighting
+    return (md: any) => {
+      md.renderer.rules.fence = (tokens: any, idx: number) => {
+        const token = tokens[idx]
+        return `<pre class="shiki vitesse-dark"><code class="language-${token.info}">${token.content}</code></pre>`
+      }
+    }
+  },
+}))
